@@ -8,4 +8,5 @@ module.exports = function(router) {
 	// require('../mail/mail.server.route')(router);
 	require('../sample/sample.server.route')(router);
 	require('../auth/auth.server.route')(router);
+	require('../dailyUpdate/dailyUpdate.server.route')(router);
 };

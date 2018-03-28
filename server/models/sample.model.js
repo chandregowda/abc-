@@ -46,12 +46,6 @@ SampleUserSchema.set('toJSON', { getters: true, virtuals: false }); // This is r
  * Schema METHOD addition which works on INSTANCE level
  */
 SampleUserSchema.methods.findAllUsersOfMyAge = function(cb) {
-	console.log('Finding users of m');
-};
-/**
- * Schema METHOD addition which works on INSTANCE level
- */
-SampleUserSchema.methods.findAllUsersOfMyAge = function(cb) {
 	console.log('Finding users of my Age: ', this.age);
 	return this.model('SampleUser').find({ age: this.age }, cb);
 };

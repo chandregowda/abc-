@@ -105,7 +105,7 @@ Sample.createSampleRecord = function(req, res) {
 		if (!err) {
 			return res.json(result);
 		} else {
-			return res.status.send(err); // 500 error
+			return res.status(500).send(err); // 500 error
 		}
 	});
 };
