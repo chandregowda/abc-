@@ -7,17 +7,16 @@ const DailyUpdate = {};
 module.exports = { DailyUpdate };
 
 // Create
+// {
+// 	"createdAt": "1522261615021",
+// 	"displayName": "Chandre Gowda",
+// 	"obstacles": "dsfasdf",
+// 	"teamRoom": "agni",
+// 	"today": "dasdfasd",
+// 	"accountName": "cgowda",
+// 	"yesterday": "asdasdfas"
+// }
 DailyUpdate.create = function(req, res) {
-	/* POST DATA:
-  {
-		"firstname": "Chandre",
-		"lastname": "Gowda",
-		"age": 37,
-		"description": "Something about this user",
-		"dob": "1981-04-05"
-  }
-  */
-
 	DailyUpdateModel.create(req.body, function(err, result) {
 		if (!err) {
 			return res.json(result);
@@ -30,7 +29,13 @@ DailyUpdate.create = function(req, res) {
 // Get
 DailyUpdate.get = function(req, res) {
 	// let query = req.query.id ? { _id: req.query.id } : {};
-	let query = req.query.createdAt ? { createdAt: req.query.createdAt } : {};
+	let query = req.query.createdAt ? { createdAt: parseInt(req.query.createdAt) } : {};
+	if (req.query.accountName && req.query.accountName.trim()) {
+		query.accountName = req.query.accountName.trim();
+	}
+	if (req.query.teamRoom && req.queryRoom.team.trim() !== '') {
+		query.teamRoom = req.query.teamRoom.replace(/"/g, '');
+	}
 	DailyUpdateModel.get(query, function(err, result = {}) {
 		if (!err) {
 			if (!result) {

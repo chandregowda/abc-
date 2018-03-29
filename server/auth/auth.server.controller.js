@@ -1,7 +1,8 @@
 'use strict';
 
 const { CONFIG } = require('../../config/config');
-
+const jwt = require('jsonwebtoken');
+const jwtKey = CONFIG.webTokenKey || '5ecret5@1t2oI8';
 // For AD authentication
 const ActiveDirectory = require('activedirectory');
 const maxAge = parseInt(CONFIG.server.sessionTimeOut) || 6000;
@@ -22,6 +23,9 @@ AUTH.login = (req, res) => {
 
 	authenticate(o)
 		.then((output) => {
+			if (output.token) {
+				res.setHeader('x-access-token', output.token);
+			}
 			res.json(output);
 		})
 		.catch((e) => {
@@ -54,21 +58,21 @@ const authenticate = function(options) {
 			password: pTextPassword,
 			attributes: {
 				user: [
-					'userPrincipalName',
-					'sAMAccountName',
-					'mail',
-					'lockoutTime',
-					'whenCreated',
-					'pwdLastSet',
-					'userAccountControl',
-					'employeeID',
-					'sn',
-					'givenName',
-					'initials',
 					'cn',
 					'displayName',
-					'comment',
-					'description'
+					'employeeID',
+					'mail',
+					'sAMAccountName',
+					'whenCreated'
+					// 'userPrincipalName',
+					// 'lockoutTime',
+					// 'pwdLastSet',
+					// 'userAccountControl',
+					// 'sn',
+					// 'givenName',
+					// 'initials',
+					// 'comment',
+					// 'description'
 				]
 			}
 		};
@@ -77,10 +81,12 @@ const authenticate = function(options) {
 		ad.authenticate(username, pTextPassword, function(err, auth) {
 			if (err) {
 				// logger.WARN('Login Failed : ' + JSON.stringify(err));
+				let message = 'INVALID_CREDENTIALS';
+				if (err.code === 'ETIMEDOUT') {
+					message = 'ETIMEDOUT';
+				}
 				console.log('Login Failed : ' + JSON.stringify(err));
-				return reject({
-					message: 'INVALID_CREDS'
-				});
+				return reject({ message });
 			}
 
 			let opts = {
@@ -105,15 +111,26 @@ const authenticate = function(options) {
 						// logger.WARN(JSON.stringify(details));
 						// logger.WARN("User details found");
 					}
-					// logger.WARN(new Date().toLocaleString() + ': LOGIN SUCCESS by : ' + loginId);
 					console.log(new Date().toLocaleString() + ': LOGIN SUCCESS by : ' + loginId);
-					let csession = new Buffer(details.whenCreated + '-' + details.mail).toString('base64');
-					let dsession = new Buffer(details.whenCreated).toString('base64');
+					// logger.WARN(new Date().toLocaleString() + ': LOGIN SUCCESS by : ' + loginId);
 
+					// let csession = new Buffer(details.whenCreated + '-' + details.mail).toString('base64');
+					// let dsession = new Buffer(details.whenCreated).toString('base64');
+					// console.log(details);
+					const token = jwt.sign(JSON.parse(JSON.stringify(details)), jwtKey, { expiresIn: '1h' });
 					return resolve({
 						message: 'LOGIN_SUCCESSFUL',
-						details
+						details,
+						token
 					});
+
+					// NOTE: First verify, and then decode
+					// // verify a token symmetric
+					// jwt.verify(token, jwtKey, function(err, decoded) {
+					// 	console.log(decoded)
+					// });
+					// get the decoded payload ignoring signature, no secretOrPrivateKey needed
+					// var decoded = jwt.decode(token);
 				});
 			} else {
 				// logger.WARN(username + ' : Authentication failed!');

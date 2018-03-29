@@ -29,6 +29,7 @@ if (cluster.isMaster) {
 	const compression = require('compression');
 	const bodyParser = require('body-parser');
 	const parseurl = require('parseurl');
+	const jwt = require('jsonwebtoken');
 
 	const express = require('express');
 	let app = express();
@@ -38,11 +39,36 @@ if (cluster.isMaster) {
 	app.use(cors());
 	app.use(router);
 
-	app.use(function(req, res, next) {
-		let requestURL = parseurl(req);
-		console.log(new Date().toLocaleString() + ` : Request for : ${requestURL}`);
-		next();
-	});
+	const validateRequest = function(req, res, next) {
+		// check header or url parameters or post parameters for token
+		var token = req.headers['x-access-token'] || req.body.token || req.query.token;
+		// decode token
+		if (token) {
+			// verifies secret and checks exp
+			jwt.verify(token, CONFIG.webTokenKey, function(err, decoded) {
+				if (err) {
+					return res.json({ success: false, message: 'Failed to authenticate token.' });
+				} else {
+					// if everything is good, save to request for use in other routes
+					req.decoded = decoded;
+					next();
+				}
+			});
+		} else {
+			// if there is no token
+			// return an error
+			return res.status(403).send({
+				success: false,
+				message: 'No token provided.'
+			});
+		}
+	};
+
+	// app.use(function(req, res, next) {
+	// 	let requestURL = parseurl(req);
+	// 	console.log(new Date().toLocaleString() + ` : Request for : ${requestURL}`);
+	// 	next();
+	// });
 
 	router.use(bodyParser.json());
 	router.use(
@@ -50,8 +76,9 @@ if (cluster.isMaster) {
 			extended: false
 		})
 	);
+
 	/**load route file*/
-	require('./routes/router')(router);
+	require('./routes/router')(router, validateRequest);
 
 	app.listen(CONFIG.server.port, (e) => {
 		if (e) {

@@ -5,16 +5,15 @@ const DB_CONNECTION = require('../database/database.js');
 const Schema = mongoose.Schema;
 const DailyUpdateSchema = new Schema({
 	createdAt: Number,
-	displayName: String,
-	obstacles: String,
 	teamRoom: String,
+	accountName: { type: String, required: true },
+	displayName: String,
 	today: String,
-	userId: Number,
-	yesterday: String
+	yesterday: String,
+	obstacles: String
 });
-
-DailyUpdateSchema.index({ firstname: 1, dob: -1 }); // schema level
-DailyUpdateSchema.set('autoIndex', false); // To imporve performance unset autoIndex
+DailyUpdateSchema.index({ createdAt: 1, teamRoom: 1, accountName: 1 }, { unique: true });
+// DailyUpdateSchema.set('autoIndex', false); // To imporve performance unset autoIndex
 
 /**
  * Schema STATIC addition which works on entire Model
