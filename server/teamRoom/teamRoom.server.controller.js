@@ -9,7 +9,8 @@ module.exports = { TeamRoom };
 // Create
 // {
 // 	"owner": "cgowda",
-// 	"displayName": "Agni - Team 1",
+// 	"ownerName": "Chandre Gowda",
+// 	"displayName": "Agni - Wellness Team 1",
 // 	"teamRoom": "agni"
 // }
 TeamRoom.create = function(req, res) {

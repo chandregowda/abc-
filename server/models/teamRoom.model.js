@@ -6,6 +6,7 @@ const Schema = mongoose.Schema;
 
 const TeamRoomSchema = new Schema({
 	owner: { type: String, required: true },
+	ownerName: { type: String, required: true },
 	displayName: { type: String, required: true, unique: true },
 	teamRoom: { type: String, required: true, unique: true } // used for Options value purpose, NO SPACE allowed
 });
