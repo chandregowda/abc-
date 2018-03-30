@@ -14,7 +14,7 @@ module.exports = { TeamRoom };
 // 	"value": "agni"
 // }
 TeamRoom.create = function(req, res) {
-	TeamRoomModel.create(req.body, function(err, result) {
+	TeamRoomModel.create(req.body.data, function(err, result) {
 		if (!err) {
 			return res.json(result);
 		} else {
@@ -45,7 +45,7 @@ TeamRoom.get = function(req, res) {
 
 // Delete
 TeamRoom.delete = function(req, res) {
-	TeamRoomModel.removeById({ _id: req.query.id }, function(err, result) {
+	TeamRoomModel.removeById({ _id: req.query.id, owner: req.query.owner }, function(err, result) {
 		if (!err) {
 			return res.json(result);
 		} else {
