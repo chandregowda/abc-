@@ -8,9 +8,9 @@ const TeamRoomSchema = new Schema({
 	owner: { type: String, required: true },
 	ownerName: { type: String, required: true },
 	displayName: { type: String, required: true, unique: true },
-	teamRoom: { type: String, required: true, unique: true } // used for Options value purpose, NO SPACE allowed
+	value: { type: String, required: true, unique: true } // used for Options value purpose, NO SPACE allowed
 });
-TeamRoomSchema.index({ createdAt: 1, teamRoom: 1 }, { unique: true });
+TeamRoomSchema.index({ owner: 1, value: 1 }, { unique: true });
 
 /**
  * Schema STATIC addition which works on entire Model
