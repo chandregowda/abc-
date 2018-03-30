@@ -9,4 +9,5 @@ module.exports = function(router, tokenValidator) {
 	require('../sample/sample.server.route')(router, tokenValidator);
 	require('../auth/auth.server.route')(router);
 	require('../dailyUpdate/dailyUpdate.server.route')(router, tokenValidator);
+	require('../teamRoom/teamRoom.server.route')(router, tokenValidator);
 };
