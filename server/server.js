@@ -25,11 +25,17 @@ if (cluster.isMaster) {
 		console.log('Worker ' + worker.process.pid + ' died with code: ' + code + ', and signal: ' + signal);
 	});
 } else {
+	/**
+	 * Child workers start here
+	 */
 	const cors = require('cors');
 	const compression = require('compression');
 	const bodyParser = require('body-parser');
 	const parseurl = require('parseurl');
 	const jwt = require('jsonwebtoken');
+	const path = require('path');
+
+	const PUBLIC_FOLDER = path.resolve(__dirname, '../public');
 
 	const express = require('express');
 	let app = express();
@@ -38,6 +44,9 @@ if (cluster.isMaster) {
 	app.use(compression());
 	app.use(cors());
 	app.use(router);
+
+	// Static folder to server index.html
+	app.use(express.static(PUBLIC_FOLDER));
 
 	const validateRequest = function(req, res, next) {
 		// check header or url parameters or post parameters for token
@@ -79,6 +88,26 @@ if (cluster.isMaster) {
 
 	/**load route file*/
 	require('./routes/router')(router, validateRequest);
+
+	app.use(function(req, res, next) {
+		res.status(404);
+
+		// respond with html page
+		if (req.accepts('html')) {
+			// res.render('404', { url: req.url });
+			res.sendFile(path.resolve(PUBLIC_FOLDER, 'index.html'));
+			return;
+		}
+
+		// respond with json
+		if (req.accepts('json')) {
+			res.send({ error: 'Not found' });
+			return;
+		}
+
+		// default to plain-text. send()
+		res.type('txt').send('Not found');
+	});
 
 	app.listen(CONFIG.server.port, (e) => {
 		if (e) {
