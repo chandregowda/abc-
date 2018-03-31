@@ -34,6 +34,7 @@ if (cluster.isMaster) {
 	const parseurl = require('parseurl');
 	const jwt = require('jsonwebtoken');
 	const path = require('path');
+	const fs = require('fs');
 
 	const PUBLIC_FOLDER = path.resolve(__dirname, '../public');
 
@@ -109,10 +110,37 @@ if (cluster.isMaster) {
 		res.type('txt').send('Not found');
 	});
 
-	app.listen(CONFIG.server.port, (e) => {
-		if (e) {
-			return console.log('Failed to start server:', e);
+	if (CONFIG.server.protocol == 'https') {
+		let _https = require('https');
+		try {
+			let privateKey = fs.readFileSync(path.resolve(CONFIG.server.private_key)).toString();
+			let certificate = fs.readFileSync(path.resolve(CONFIG.server.certificate)).toString();
+			let credentials = { key: privateKey, cert: certificate };
+			let httpsServer = _https.createServer(credentials, app);
+			httpsServer.listen(CONFIG.server.https_port || 443, (e) => {
+				if (e) {
+					return console.log('Failed to start server:', e);
+				}
+				console.log('HTTPS Server Started at port : ', CONFIG.server.https_port);
+			});
+		} catch (e) {
+			console.log(e);
+			console.log('Failed to load the privateKey and certificate');
 		}
-		console.log('Server Started at port : ', CONFIG.server.port);
-	});
+		// Listin to default HTTP port 80, and then redirect if user does not prefix URL with https
+		/*	let httpServer = _http.createServer(function (req, res) {
+					res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+					res.end();
+			}).listen(80);*/
+	} else {
+		let _http = require('http');
+
+		let httpServer = _http.createServer(app);
+		app.listen(CONFIG.server.port, (e) => {
+			if (e) {
+				return console.log('Failed to start server:', e);
+			}
+			console.log('HTTP Server Started at port : ', CONFIG.server.port);
+		});
+	}
 }

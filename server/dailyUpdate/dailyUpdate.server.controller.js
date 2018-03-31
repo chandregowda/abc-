@@ -50,7 +50,7 @@ DailyUpdate.get = function(req, res) {
 
 // Delete
 DailyUpdate.delete = function(req, res) {
-	DailyUpdateModel.removeById({ _id: req.query.id }, function(err, result) {
+	DailyUpdateModel.removeById({ _id: req.query.id, accountName: req.query.accountName }, function(err, result) {
 		if (!err) {
 			return res.json(result);
 		} else {

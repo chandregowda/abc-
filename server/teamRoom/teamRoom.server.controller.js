@@ -8,10 +8,12 @@ module.exports = { TeamRoom };
 
 // Create
 // {
-// 	"owner": "cgowda",
-// 	"ownerName": "Chandre Gowda",
-// 	"displayName": "Agni - Wellness Team 1",
-// 	"value": "agni"
+// 	data: {
+// 		owner: 'AApoorva',
+// 		ownerName: 'Ashish Apporva',
+// 		displayName: 'Prithvi - Wellness Team',
+// 		value: 'prithvi'
+// 	}
 // }
 TeamRoom.create = function(req, res) {
 	TeamRoomModel.create(req.body.data, function(err, result) {
