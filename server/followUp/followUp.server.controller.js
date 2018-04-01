@@ -1,10 +1,10 @@
 'use strict';
 const mongoose = require('mongoose');
-const DailyUpdateModel = require('../models/dailyUpdate.model');
+const FollowUpModel = require('../models/followup.model');
 const DB_CONNECTION = require('../database/database.js');
 
-const DailyUpdate = {};
-module.exports = { DailyUpdate };
+const FollowUp = {};
+module.exports = { FollowUp };
 
 // Create
 // {
@@ -16,8 +16,8 @@ module.exports = { DailyUpdate };
 // 	"accountName": "cgowda",
 // 	"yesterday": "asdasdfas"
 // }
-DailyUpdate.create = function(req, res) {
-	DailyUpdateModel.create(req.body, function(err, result) {
+FollowUp.create = function(req, res) {
+	FollowUpModel.create(req.body, function(err, result) {
 		if (!err) {
 			return res.json(result);
 		} else {
@@ -27,16 +27,18 @@ DailyUpdate.create = function(req, res) {
 };
 
 // Get
-DailyUpdate.get = function(req, res) {
+FollowUp.get = function(req, res) {
 	// let query = req.query.id ? { _id: req.query.id } : {};
-	let query = req.query.createdAt ? { createdAt: parseInt(req.query.createdAt) } : {};
-	if (req.query.accountName && req.query.accountName.trim()) {
-		query.accountName = req.query.accountName.trim();
-	}
+	let query = {};
+
 	if (req.query.teamRoom && req.query.teamRoom.trim() !== '') {
-		query.teamRoom = req.query.teamRoom.replace(/"/g, '');
+		query.teamRoom = req.query.teamRoom;
 	}
-	DailyUpdateModel.get(query, function(err, result = {}) {
+	if (req.query.status && req.query.status.trim() !== '') {
+		query.status = req.query.status;
+	}
+	console.log('Query: ', query);
+	FollowUpModel.get(query, function(err, result = {}) {
 		if (!err) {
 			if (!result) {
 				result = {};
@@ -49,8 +51,8 @@ DailyUpdate.get = function(req, res) {
 };
 
 // Delete
-DailyUpdate.delete = function(req, res) {
-	DailyUpdateModel.removeById({ _id: req.query.id, accountName: req.query.accountName }, function(err, result) {
+FollowUp.delete = function(req, res) {
+	FollowUpModel.removeById({ _id: req.query.id, accountName: req.query.accountName }, function(err, result) {
 		if (!err) {
 			return res.json(result);
 		} else {
@@ -61,9 +63,9 @@ DailyUpdate.delete = function(req, res) {
 };
 
 // Update
-DailyUpdate.update = function(req, res) {
+FollowUp.update = function(req, res) {
 	let query = req.query.id ? { _id: req.query.id } : {};
-	DailyUpdateModel.updateById(query, req.body, function(err, result) {
+	FollowUpModel.updateById(query, req.body, function(err, result) {
 		if (!err) {
 			return res.json(result);
 		} else {
