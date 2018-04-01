@@ -2,7 +2,7 @@ var CONFIG = {
 	appName: 'CAPI',
 	server: {
 		port: 3100,
-		https_port: 8443,
+		https_port: 443,
 		MAX_NUMBER_OF_CPU: 4, // For cluster to use cores avaliable in box
 		ldapURL: 'ldap://192.168.210.24:389',
 		// ldapURL: 'ldap://192.168.227.27:389', // PRODUCTION
