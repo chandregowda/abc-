@@ -29,13 +29,22 @@ DailyUpdate.create = function(req, res) {
 // Get
 DailyUpdate.get = function(req, res) {
 	// let query = req.query.id ? { _id: req.query.id } : {};
-	let query = req.query.createdAt ? { createdAt: parseInt(req.query.createdAt) } : {};
+	let query = {};
 	if (req.query.accountName && req.query.accountName.trim()) {
 		query.accountName = req.query.accountName.trim();
 	}
 	if (req.query.teamRoom && req.query.teamRoom.trim() !== '') {
 		query.teamRoom = req.query.teamRoom.replace(/"/g, '');
 	}
+	if (parseInt(req.query.startDate) && parseInt(req.query.endDate)) {
+		query.createdAt = {
+			$gte: parseInt(req.query.startDate),
+			$lte: parseInt(req.query.endDate)
+		};
+	} else if (parseInt(req.query.createdAt)) {
+		query.createdAt = parseInt(req.query.createdAt);
+	}
+
 	DailyUpdateModel.get(query, function(err, result = {}) {
 		if (!err) {
 			if (!result) {
