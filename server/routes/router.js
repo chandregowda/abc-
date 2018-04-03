@@ -11,4 +11,5 @@ module.exports = function(router, tokenValidator) {
 	require('../dailyUpdate/dailyUpdate.server.route')(router, tokenValidator);
 	require('../teamRoom/teamRoom.server.route')(router, tokenValidator);
 	require('../followUp/followUp.server.route')(router, tokenValidator);
+	require('../user/user.server.route')(router, tokenValidator);
 };

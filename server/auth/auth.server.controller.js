@@ -26,7 +26,22 @@ AUTH.login = (req, res) => {
 			if (output.token) {
 				res.setHeader('x-access-token', output.token);
 			}
-			res.json(output);
+			// Now create or update User table if user exists for login count and last login time
+			const UserModel = require('../models/user.model');
+			const DB_CONNECTION = require('../database/database.js');
+			const moment = require('moment');
+			let { sAMAccountName, displayName } = output.details;
+			console.log(`Acc: ${sAMAccountName} and disNa: ${displayName}`);
+			UserModel.create({ accountName: sAMAccountName, displayName }, function(err, result) {
+				console.log(result);
+				output.details.loginCount = result.loginCount;
+				output.details.role = result.role;
+				if (!err) {
+					res.json(output); // Note it is returing AUTH output
+				} else {
+					return res.status(500).send(err); // 500 error
+				}
+			});
 		})
 		.catch((e) => {
 			res.json({ message: 'LOGIN_FAILURE', error: e });
