@@ -46,7 +46,7 @@ UserSchema.statics = {
 			updateObj,
 			{
 				upsert: true,
-				new: true
+				new: false // get the old record by setting it to false, else you wil not get the lastlogin date
 			},
 			function(err, model) {
 				return callback(err, model);

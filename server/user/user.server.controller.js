@@ -18,6 +18,7 @@ module.exports = { User };
 User.create = function(req, res) {
 	UserModel.create(req.body.data, function(err, result) {
 		if (!err) {
+			result.details.loginCount++; // Increment as it was returned with old record before update
 			return res.json(result);
 		} else {
 			return res.status(500).send(err); // 500 error

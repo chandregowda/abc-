@@ -42,8 +42,27 @@ DailyUpdateSchema.statics = {
 	},
 
 	create: function(data, callback) {
-		var instance = new this(data);
-		instance.save(callback);
+		let updateObj = { ...data };
+		this.findOneAndUpdate(
+			{
+				$and: [
+					{ accountName: updateObj.accountName },
+					{ createdAt: updateObj.createdAt },
+					{ teamRoom: updateObj.teamRoom }
+				]
+			},
+			updateObj,
+			{
+				upsert: true,
+				new: true // get the new record by setting it to true
+			},
+			function(err, model) {
+				return callback(err, model);
+			}
+		);
+
+		// var instance = new this(data);
+		// instance.save(callback);
 	}
 };
 

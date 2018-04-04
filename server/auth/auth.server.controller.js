@@ -31,10 +31,8 @@ AUTH.login = (req, res) => {
 			const DB_CONNECTION = require('../database/database.js');
 			const moment = require('moment');
 			let { sAMAccountName, displayName } = output.details;
-			console.log(`Acc: ${sAMAccountName} and disNa: ${displayName}`);
 			UserModel.create({ accountName: sAMAccountName, displayName }, function(err, result) {
-				console.log(result);
-				output.details.loginCount = result.loginCount;
+				output.details.loginCount = result.loginCount + 1;
 				output.details.role = result.role;
 				if (!err) {
 					res.json(output); // Note it is returing AUTH output
