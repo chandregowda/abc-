@@ -8,7 +8,8 @@ const TeamRoomSchema = new Schema({
 	owner: { type: String, required: true },
 	ownerName: { type: String, required: true },
 	displayName: { type: String, required: true, unique: true },
-	value: { type: String, required: true, unique: true } // used for Options value purpose, NO SPACE allowed
+	value: { type: String, required: true, unique: true }, // used for Options value purpose, NO SPACE allowed
+	members: [ String ]
 });
 TeamRoomSchema.index({ owner: 1, value: 1 }, { unique: true });
 

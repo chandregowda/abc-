@@ -32,8 +32,8 @@ AUTH.login = (req, res) => {
 			const moment = require('moment');
 			let { sAMAccountName, displayName } = output.details;
 			UserModel.create({ accountName: sAMAccountName, displayName }, function(err, result) {
-				output.details.loginCount = result.loginCount + 1;
-				output.details.role = result.role;
+				output.details.loginCount = result ? result.loginCount++ : 1; // For the first time creation result will be null as we are expecting last login result and not the newly created ones
+				output.details.role = result ? result.role : 'unknown';
 				if (!err) {
 					res.json(output); // Note it is returing AUTH output
 				} else {
@@ -130,7 +130,7 @@ const authenticate = function(options) {
 					// let csession = new Buffer(details.whenCreated + '-' + details.mail).toString('base64');
 					// let dsession = new Buffer(details.whenCreated).toString('base64');
 					// console.log(details);
-					const token = jwt.sign(JSON.parse(JSON.stringify(details)), jwtKey, { expiresIn: '1h' });
+					const token = jwt.sign(JSON.parse(JSON.stringify(details)), jwtKey, { expiresIn: '24h' });
 					return resolve({
 						message: 'LOGIN_SUCCESSFUL',
 						details,

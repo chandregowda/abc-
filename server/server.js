@@ -23,6 +23,7 @@ if (cluster.isMaster) {
 	// If something goes wrong and the worker is killed, start new worker
 	cluster.on('exit', function(worker, code, signal) {
 		console.log('Worker ' + worker.process.pid + ' died with code: ' + code + ', and signal: ' + signal);
+		cluster.fork();
 	});
 } else {
 	/**

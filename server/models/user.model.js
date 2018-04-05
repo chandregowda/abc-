@@ -7,7 +7,6 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
 	accountName: { type: String, required: true, default: 'unknown' },
 	displayName: { type: String, required: true, default: 'Unknown Name' },
-	teamRooms: [ String ],
 	lastLogin: { type: Number, default: moment().format('x') },
 	loginCount: { type: Number, default: -1 },
 	role: { type: String, default: 'unknown' } // perf, app_qa, api_qa, app_dev, api_dev, pdm, yso
